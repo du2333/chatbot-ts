@@ -8,7 +8,7 @@ import { onMounted } from 'vue';
 
 const emit = defineEmits(['chatLoaded'])
 
-function saveChat(chat: Chat) {
+function saveChat(chat: Chat[]) {
     localStorage.setItem('chats', JSON.stringify(chat))
 }
 
@@ -28,4 +28,8 @@ defineExpose({
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.storage {
+    display: none;
+}
+</style>

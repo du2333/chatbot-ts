@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import type { ChatMessage, Chat } from '@/types';
-import { ref, onMounted,type Ref } from 'vue'
+import { ref, onMounted, type Ref } from 'vue'
 import message from './Message.vue'
 import request from './Request.vue'
 import storage from './Storage.vue'
@@ -32,7 +32,7 @@ import storage from './Storage.vue'
 
 const chats = ref<Chat[]>([])
 const selectedChat: Ref<number | null> = ref(null)
-const storageRef = ref()
+const storageRef: Ref<InstanceType<typeof storage> | null> = ref(null)
 
 function addMessage(message: ChatMessage) {
     if (selectedChat.value !== null) {
@@ -41,8 +41,7 @@ function addMessage(message: ChatMessage) {
         createChat()
         addMessage(message)
     }
-    if (storageRef.value)
-        storageRef.value.saveChat(chats.value)
+    if (storageRef.value) { storageRef.value.saveChat(chats.value) }
 }
 
 function createChat() {
@@ -58,7 +57,7 @@ function createChat() {
 
 function deleteChat(index: number) {
     if (confirm('确定要删除吗？')) {
-       chats.value.splice(index, 1)
+        chats.value.splice(index, 1)
         if (selectedChat.value === index) {
             selectedChat.value = null
         }

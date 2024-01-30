@@ -8,7 +8,9 @@
 import type { ChatMessage } from '@/types';
 import { ref } from 'vue'
 
-const emit = defineEmits(['send-message'])
+const emit = defineEmits<{
+    (e:'send-message', message: ChatMessage): void
+}>()
 
 const userInput = ref('')
 const loading = ref(false)
@@ -58,8 +60,4 @@ async function sendRequest(history?: ChatMessage[]) {
 }
 </script>
 
-<style scoped>
-.storage {
-    display: none;
-}
-</style>
+<style scoped></style>
