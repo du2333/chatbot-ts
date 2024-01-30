@@ -1,6 +1,6 @@
 <template>
     <div class="request">
-        <input v-model="userInput" placeholder="说点什么吧。。。" @keyup.enter="sendMessage">
+        <input v-model="userInput" :disabled="loading" @keyup.enter="sendMessage" placeholder="说点什么吧。。。">
     </div>
 </template>
 
@@ -11,9 +11,10 @@ import { ref } from 'vue'
 const emit = defineEmits(['send-message'])
 
 const userInput = ref('')
+const loading = ref(false)
 
 async function sendMessage() {
-    if (!userInput.value) return
+    if (!userInput.value || loading.value) return
 
     let message: ChatMessage = {
         role: 'user',
@@ -21,6 +22,7 @@ async function sendMessage() {
     }
     emit('send-message', message)
 
+    loading.value = true
     const response: string = await sendRequest()
 
     message = {
@@ -29,7 +31,8 @@ async function sendMessage() {
     }
     emit('send-message', message)
 
-    userInput.value = '' 
+    userInput.value = ''
+    loading.value = false
 }
 
 async function sendRequest(history?: ChatMessage[]) {
@@ -55,4 +58,8 @@ async function sendRequest(history?: ChatMessage[]) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.storage {
+    display: none;
+}
+</style>

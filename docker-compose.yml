@@ -1,0 +1,6 @@
+services:
+  chatbot-be:
+    container_name: chatbot-be
+    ports:
+      - 8000:8000
+    image: du2333/chatbot-be:v1.0

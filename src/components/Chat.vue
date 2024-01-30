@@ -14,39 +14,41 @@
         <div class="chat" v-if="selectedChat !== null">
             <h2>请开始你的表演</h2>
             <div class="message-container">
-                <Message v-for="(message, index) in chats[selectedChat].messages" :message="message" :key="index"></Message>
+                <message v-for="(message, index) in chats[selectedChat].messages" :message="message" :key="index"></message>
             </div>
         </div>
-        <Request @send-message="addMessage"></Request>
+        <request @send-message="addMessage"></request>
+        <storage @chat-loaded="chats = $event" ref="storageRef"></storage>
     </div>
 </template>
 
 <script setup lang="ts">
 import type { ChatMessage, Chat } from '@/types';
-import { ref, type Ref } from 'vue'
-import Message from './Message.vue'
-import Request from './Request.vue'
+import { ref, onMounted,type Ref } from 'vue'
+import message from './Message.vue'
+import request from './Request.vue'
+import storage from './Storage.vue'
 
 
 const chats = ref<Chat[]>([])
 const selectedChat: Ref<number | null> = ref(null)
+const storageRef = ref()
 
 function addMessage(message: ChatMessage) {
     if (selectedChat.value !== null) {
         chats.value[selectedChat.value].messages.push(message)
     } else {
-        selectedChat.value = 0
-        chats.value.push({
-            title: '新的聊天',
-            messages: []
-        })
+        createChat()
         addMessage(message)
     }
-    // save
+    if (storageRef.value)
+        storageRef.value.saveChat(chats.value)
 }
 
 function createChat() {
     const chat: Chat = {
+        id: Date.now(),
+        timestamp: Date.now(),
         title: '新的聊天',
         messages: []
     }
@@ -55,12 +57,22 @@ function createChat() {
 }
 
 function deleteChat(index: number) {
-    chats.value.splice(index, 1)
-    if (selectedChat.value === index) {
-        selectedChat.value = null
+    if (confirm('确定要删除吗？')) {
+       chats.value.splice(index, 1)
+        if (selectedChat.value === index) {
+            selectedChat.value = null
+        }
+    }
+    if (chats.value.length === 0) {
+        createChat()
     }
 }
 
+onMounted(() => {
+    if (chats.value.length === 0) {
+        createChat()
+    }
+})
 </script>
 
 <style scoped>

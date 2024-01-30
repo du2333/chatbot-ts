@@ -4,6 +4,8 @@ export interface ChatMessage {
 }
 
 export interface Chat {
+    id: number;
+    timestamp: number;
     title: string;
     messages: ChatMessage[];
 }
