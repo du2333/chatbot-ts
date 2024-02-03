@@ -14,25 +14,25 @@
         <div class="chat" v-if="selectedChat !== null">
             <h2>请开始你的表演</h2>
             <div class="message-container">
-                <message v-for="(message, index) in chats[selectedChat].messages" :message="message" :key="index"></message>
+                <messageComponent v-for="(message, index) in chats[selectedChat].messages" :message="message" :key="index"></messageComponent>
             </div>
         </div>
-        <request @send-message="addMessage"></request>
-        <storage @chat-loaded="chats = $event" ref="storageRef"></storage>
+        <requestComponent @send-message="addMessage"></requestComponent>
+        <storageComponent @chat-loaded="chats = $event" ref="storageRef"></storageComponent>
     </div>
 </template>
 
 <script setup lang="ts">
 import type { ChatMessage, Chat } from '@/types';
 import { ref, onMounted, type Ref } from 'vue'
-import message from './Message.vue'
-import request from './Request.vue'
-import storage from './Storage.vue'
+import messageComponent from './Message.vue'
+import requestComponent from './Request.vue'
+import storageComponent from './Storage.vue'
 
 
 const chats = ref<Chat[]>([])
 const selectedChat: Ref<number | null> = ref(null)
-const storageRef: Ref<InstanceType<typeof storage> | null> = ref(null)
+const storageRef: Ref<InstanceType<typeof storageComponent> | null> = ref(null)
 
 function addMessage(message: ChatMessage) {
     if (selectedChat.value !== null) {
@@ -41,7 +41,7 @@ function addMessage(message: ChatMessage) {
         createChat()
         addMessage(message)
     }
-    if (storageRef.value) { storageRef.value.saveChat(chats.value) }
+    storageRef.value?.saveChat(chats.value)
 }
 
 function createChat() {
