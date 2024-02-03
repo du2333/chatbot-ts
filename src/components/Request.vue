@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import type { ChatMessage } from '@/types';
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 const emit = defineEmits<{
     (e:'send-message', message: ChatMessage): void
@@ -37,7 +37,7 @@ async function sendMessage() {
     loading.value = false
 }
 
-async function sendRequest(history?: ChatMessage[]) {
+async function sendRequest(history?: ChatMessage[]): Promise<string> {
     const url = 'http://localhost:8000/chat'
 
     const response = await fetch(url, {

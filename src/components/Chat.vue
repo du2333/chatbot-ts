@@ -14,7 +14,8 @@
         <div class="chat" v-if="selectedChat !== null">
             <h2>请开始你的表演</h2>
             <div class="message-container">
-                <messageComponent v-for="(message, index) in chats[selectedChat].messages" :message="message" :key="index"></messageComponent>
+                <messageComponent v-for="(message, index) in chats[selectedChat].messages" :message="message" :key="index">
+                </messageComponent>
             </div>
         </div>
         <requestComponent @send-message="addMessage"></requestComponent>
@@ -37,11 +38,11 @@ const storageRef: Ref<InstanceType<typeof storageComponent> | null> = ref(null)
 function addMessage(message: ChatMessage) {
     if (selectedChat.value !== null) {
         chats.value[selectedChat.value].messages.push(message)
+        storageRef.value?.saveSelectedChat(selectedChat.value, chats.value[selectedChat.value])
     } else {
         createChat()
         addMessage(message)
     }
-    storageRef.value?.saveChat(chats.value)
 }
 
 function createChat() {
@@ -53,17 +54,21 @@ function createChat() {
     }
     chats.value.push(chat)
     selectedChat.value = chats.value.length - 1
+    storageRef.value?.saveSelectedChat(selectedChat.value, chats.value[selectedChat.value])
 }
 
 function deleteChat(index: number) {
     if (confirm('确定要删除吗？')) {
         chats.value.splice(index, 1)
+        storageRef.value?.deleteSelectedChat(index)
         if (selectedChat.value === index) {
             selectedChat.value = null
         }
     }
     if (chats.value.length === 0) {
         createChat()
+    } else if (selectedChat.value !== null && selectedChat.value >= chats.value.length) {
+        selectedChat.value = chats.value.length - 1
     }
 }
 
@@ -71,6 +76,7 @@ onMounted(() => {
     if (chats.value.length === 0) {
         createChat()
     }
+
 })
 </script>
 
